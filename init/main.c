@@ -6,6 +6,7 @@
 #include <sys/sysinfo.h>
 #include <linux/fcntl.h>
 #include <dirent.h>
+#include <stdlib.h>
 
 void quit()
 {
@@ -37,18 +38,27 @@ char dTypeDisplay(char d_type)
     }
 }
 
-void printFileSystem()
+void ls(const char *directory)
 {
     struct dirent *item;
     DIR *pDir;
-    pDir = opendir(".");
+    pDir = opendir(strlen(directory) > 0 ? directory : ".");
+    if (pDir == NULL)
+    {
+        printf("No directory '%s'\n", directory);
+        return;
+    }
     while ((item = readdir(pDir)) != NULL)
         printf("%c %s\n", dTypeDisplay(item->d_type), item->d_name);
-
     closedir(pDir);
 }
 
-void printSysInfo()
+void cd(const char *directory)
+{
+    chdir(directory);
+}
+
+void info()
 {
     struct sysinfo info;
     syscall(SYS_sysinfo, &info);
@@ -58,7 +68,7 @@ void printSysInfo()
     printf("Proc count:\t%d\n", info.procs);
 }
 
-void printSplash()
+void splash()
 {
     printf(" ___ _         _         \n");
     printf("| _ |_)__ _ __| |__ _  _ \n");
@@ -73,7 +83,7 @@ void clearScreen()
     printf("\033[0;0f");
 }
 
-void printUsage()
+void usage()
 {
     printf("\033[1;37mBigsby Linux v0.0.2\033[0m\n\n");
     printf("Available commads:\n");
@@ -84,29 +94,45 @@ void printUsage()
     printf("\tquit\t\texit system\n");
 }
 
-int main()
+void handleCommand(char *input)
 {
-    clearScreen();
-    printSplash();
-    printf("Welcome to Bigsby Linux\n\n");
-    printUsage();
-    int go = 1;
-    char command[50];
-    while (1)
+    if (input[strlen(input) - 1] == '\n')
+        input[strlen(input) - 1] = '\0';
+
+    char *command = strtok(input, " ");
+    if (command != NULL)
     {
-        printf("> ");
-        fgets(command, 50, stdin);
-        if (strncmp(command, "quit", 4) == 0)
+        int commandLength = strlen(command);
+        if (strcmp(command, "quit") == 0)
             quit();
-        else if (strncmp(command, "info", 4) == 0)
-            printSysInfo();
-        else if (strncmp(command, "ls", 2) == 0)
-            printFileSystem();
-        else if (strncmp(command, "help", 4) == 0)
-            printUsage();
-        else if (strncmp(command, "clear", 4) == 0)
+        else if (strcmp(command, "cd") == 0)
+            cd(input + commandLength + 1);
+        else if (strcmp(command, "info") == 0)
+            info();
+        else if (strcmp(command, "ls") == 0)
+            ls(input + commandLength + 1);
+        else if (strcmp(command, "help") == 0)
+            usage();
+        else if (strcmp(command, "clear") == 0)
             clearScreen();
         else if (strlen(command) > 1)
             printf("Unknown command: %s", command);
+
+    }
+}
+
+int main()
+{
+    clearScreen();
+    splash();
+    printf("Welcome to Bigsby Linux\n\n");
+    usage();
+    int go = 1;
+    char input[50], currentDir[100];
+    while (1)
+    {
+        printf("%s > ", getcwd(currentDir, 100));
+        fgets(input, 50, stdin);
+        handleCommand(input);
     }
 }
