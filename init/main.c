@@ -75,10 +75,10 @@ void clearScreen()
 
 void printUsage()
 {
-    printf("\033[1;37mBigsby Linux v0.0.1\033[0m\n\n");
+    printf("\033[1;37mBigsby Linux v0.0.2\033[0m\n\n");
     printf("Available commads:\n");
     printf("\tinfo\t\tdisplay system information\n");
-    printf("\tls\t\tlist filesystem content");
+    printf("\tls\t\tlist filesystem content\n");
     printf("\tclear\t\tclear screen\n");
     printf("\thelp\t\tprint this help\n");
     printf("\tquit\t\texit system\n");
