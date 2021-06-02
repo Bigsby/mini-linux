@@ -2,11 +2,15 @@
 
 A minimal Linux running system consisting only of the kernel and a small init program.
 
-To run:
-```sh
-./run.sh
-```
 > For systems not using `apt` change `run.sh` to use existing package manager
+> For *x86_64* system only
+
+
+
+To just compile kernel and RAM disk;
+```
+./compile.sh
+```
 
 This will:
 - Install needed packages, if not installed
@@ -14,7 +18,30 @@ This will:
 - Build Linux kernel
 - Build Init program
 - Create [CPIO](https://linux.die.net/man/1/cpio) archive of the file system containing `init`
+
+
+
+To run in QEMU:
+```sh
+./run.sh
+```
+
+This will:
+- Run `compile.sh`
 - Run `QEMU` in _curses_ mode using built kernel and init.
+
+
+
+To create bootable ISO:
+```sh
+./create-iso.sh
+```
+
+This will:
+- Run `compile.sh`
+- Create a bootable ISO in `builds/bigsby-linux.iso`.
+
+
 
 ## Exemple output
 ```
