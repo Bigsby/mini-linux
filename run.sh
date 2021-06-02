@@ -6,7 +6,7 @@ sudo apt install gcc make bison build-essential flex git libelf-dev libssl-dev n
 if [ ! -d "builds" ]; then
     mkdir builds
     mkdir builds/linux
-    mkdir builds/hello
+    mkdir builds/init
     mkdir builds/fs
 fi
 
@@ -28,14 +28,14 @@ cp linux/arch/x86/boot/bzImage builds/linux/
 
 
 echo "\n\n"
-echo "Build Init"
+echo "Building Init"
 
-cd hello
+cd init
 make 
 cd ..
 
-cd builds/hello/
-find . | cpio -o -H newc | gzip > ../fs/hello.cpio.gz
+cd builds/init/
+find . | cpio -o -H newc | gzip > ../fs/init.cpio.gz
 cd ../../
 
-qemu-system-x86_64 -curses -no-reboot -kernel builds/linux/bzImage -initrd builds/fs/hello.cpio.gz -append "panic=1 quiet"
+qemu-system-x86_64 -curses -no-reboot -kernel builds/linux/bzImage -initrd builds/fs/init.cpio.gz -append "panic=1 quiet"
