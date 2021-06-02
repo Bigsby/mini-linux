@@ -1,6 +1,13 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
+#include <linux/reboot.h>
+#include <sys/syscall.h>
+
+void quit()
+{
+    syscall(SYS_reboot, LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2, LINUX_REBOOT_CMD_POWER_OFF, 0);
+}
 
 void printSplash()
 {
@@ -34,12 +41,12 @@ int main()
     printUsage();
     int go = 1;
     char command[50];
-    while (go)
+    while (1)
     {
         printf("> ");
         fgets(command, 50, stdin);
         if (strncmp(command, "quit", 4) == 0)
-            go = 0;
+            quit();
         else if (strncmp(command, "help", 4) == 0)
             printUsage();
         else if (strncmp(command, "clear", 4) == 0)
