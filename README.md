@@ -3,6 +3,7 @@
 A minimal Linux running system consisting only of the kernel and a small init program.
 
 > For systems not using `apt` change `run.sh` to use existing package manager
+
 > For *x86_64* system only
 
 
